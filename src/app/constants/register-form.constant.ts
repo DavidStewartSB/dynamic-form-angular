@@ -2,7 +2,7 @@ import { IForm } from "../interface/form.interface";
 
 
 export const registerFormConfig: IForm = {
-  formTitle: 'Gym Registration Form',
+  formTitle: 'Registration Form',
   saveBtnTitle: 'Confirm Registration',
   resetBtnTitle: 'Reset',
   formControls: [

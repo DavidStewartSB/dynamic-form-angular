@@ -1,22 +1,26 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IForm, IFormControl, IValidator } from '../interface/form.interface';
 import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
 import {MatSelectModule} from '@angular/material/select';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatIconModule} from '@angular/material/icon';
+import {MatRadioModule} from '@angular/material/radio';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-dynamic-form',
   standalone: true,
-  imports: [MatInputModule, MatButtonModule, MatSelectModule, MatFormFieldModule],
+  imports: [CommonModule,MatInputModule,MatIconModule, MatButtonModule, MatSelectModule, MatFormFieldModule, ReactiveFormsModule, MatRadioModule],
   templateUrl: './dynamic-form.component.html',
   styleUrl: './dynamic-form.component.scss'
 })
 export class DynamicFormComponent implements OnInit {
   @Input() form!: IForm;
   fb = inject(FormBuilder)
-  dynamicFormGroup: any = this.fb.group({})
+  dynamicFormGroup: any  = this.fb.group({}, {updateOn: 'submit'})
+  hide = true;
 
   ngOnInit(): void {
     if (this.form?.formControls) {
@@ -44,13 +48,18 @@ export class DynamicFormComponent implements OnInit {
       console.log('Form values:', this.dynamicFormGroup.value);
     }
   }
-
-
-  // Implement validation error message handling here
-
-
   resetForm() {
     this.dynamicFormGroup.reset();
+  }
+  getValidationErrors(control: IFormControl): string {
+    const customFormControl = this.dynamicFormGroup.get(control.name)
+    let errorMessage: string = ''
+    control.validators?.forEach((val) => {
+      if(customFormControl?.hasError(val.validatorName as string)) {
+        errorMessage = val.message as string
+      }
+    })
+    return errorMessage
   }
 
 }
